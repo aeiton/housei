@@ -138,6 +138,13 @@
                 android:padding="15dp"
                 android:layout_gravity="center">
 
+                <ImageButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="#00000000"
+                    android:src="@drawable/how_icon"
+                    android:tint="#ffffff"
+                    android:scaleType="fitXY"/>
 
 
                 <TextView
@@ -146,7 +153,6 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:textColor="#ffffff"
-                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:text="T\nN\n0\n8\n6\n4\n5\n3"/>
             </LinearLayout>
