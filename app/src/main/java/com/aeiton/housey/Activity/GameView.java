@@ -24,6 +24,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.aeiton.housey.Adapters.CustomGridAdapter;
 import com.aeiton.housey.HouseyNumber;
@@ -45,6 +46,7 @@ public class GameView extends AppCompatActivity {
     LinearLayout undo;
     ImageView call;
     int MY_PERMISSION_CALL_PHONE = 1;
+    TextView tv;
     boolean flag;
 
     public static ArrayList<Integer> selectedStack = new ArrayList<>();
@@ -55,9 +57,10 @@ public class GameView extends AppCompatActivity {
 
         setContentView(R.layout.activity_game_view);
         gv = (GridView) findViewById(R.id.gridview);
-        reset = (ImageButton) findViewById(R.id.reset);
-        undo = (LinearLayout) findViewById(R.id.undo);
-        call = (ImageView) findViewById(R.id.call);
+        findViewById(R.id.marqueeText).setSelected(true);
+//        reset = (ImageButton) findViewById(R.id.reset);
+//        undo = (LinearLayout) findViewById(R.id.undo);
+//        call = (ImageView) findViewById(R.id.call);
 
 
         Random rand = new Random();
@@ -94,48 +97,48 @@ public class GameView extends AppCompatActivity {
 
         gv.setAdapter(new CustomGridAdapter(GameView.this));
 
-        reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                AlertDialog.Builder dialog = new AlertDialog.Builder(GameView.this);
-                dialog.setMessage("Do you want to reset ?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                for (HouseyNumber h : numList)
-                                    h.unSelect();
-                                gv.setAdapter(new CustomGridAdapter(GameView.this));
-                            }
-                        })
-                        .setNegativeButton("NO", null)
-                        .setCancelable(true)
-                        .show();
-
-
-            }
-        });
-
-
-        undo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selectedStack.size() != 0) {
-                    numList.get(selectedStack.get(0)).unSelect();
-                    selectedStack.remove(0);
-
-                    gv.setAdapter(new CustomGridAdapter(GameView.this));
-                }
-            }
-        });
+//        reset.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                AlertDialog.Builder dialog = new AlertDialog.Builder(GameView.this);
+//                dialog.setMessage("Do you want to reset ?")
+//                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                for (HouseyNumber h : numList)
+//                                    h.unSelect();
+//                                gv.setAdapter(new CustomGridAdapter(GameView.this));
+//                            }
+//                        })
+//                        .setNegativeButton("NO", null)
+//                        .setCancelable(true)
+//                        .show();
+//
+//
+//            }
+//        });
 
 
-        call.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:9876543210")));
-            }
-        });
+//        undo.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (selectedStack.size() != 0) {
+//                    numList.get(selectedStack.get(0)).unSelect();
+//                    selectedStack.remove(0);
+//
+//                    gv.setAdapter(new CustomGridAdapter(GameView.this));
+//                }
+//            }
+//        });
+//
+//
+//        call.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:9876543210")));
+//            }
+//        });
     }
 
 

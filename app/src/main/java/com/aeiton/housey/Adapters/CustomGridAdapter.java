@@ -2,11 +2,13 @@ package com.aeiton.housey.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.aeiton.housey.Activity.GameView;
@@ -54,6 +56,7 @@ public class CustomGridAdapter extends BaseAdapter {
 
         rootView = inflater.inflate(R.layout.number_column_item,null);
         holder.btn = (Button) rootView.findViewById(R.id.btn);
+        holder.card = (FrameLayout) rootView.findViewById(R.id.card);
 
 
         if (GameView.numList.get(position).isActive()) {
@@ -69,9 +72,22 @@ public class CustomGridAdapter extends BaseAdapter {
                 public void onClick(View v) {
                     if (!GameView.numList.get(position).isSelected()){
                         GameView.numList.get(position).selected();
-                        holder.btn.setBackgroundColor(Color.parseColor("#66bb6a"));
+                        holder.btn.setBackgroundResource(R.drawable.circle_bg);
                         holder.btn.setTextColor(Color.parseColor("#ffffff"));
                         GameView.selectedStack.add(0,position);
+
+                    }else {
+                        GameView.numList.get(position).unSelect();
+                        holder.btn.setBackgroundResource(R.drawable.number_unselected_bg);
+                        holder.btn.setTextColor(Color.parseColor("#000000"));
+                        int i = 0;
+                        for(int item : GameView.selectedStack){
+                            if (item == position) {
+                                GameView.selectedStack.remove(i);
+                                break;
+                            }
+                            i++;
+                        }
                     }
                 }
             });
@@ -81,5 +97,6 @@ public class CustomGridAdapter extends BaseAdapter {
 
     public class Holder {
         Button btn;
+        FrameLayout card;
     }
 }
