@@ -10,4 +10,18 @@
     <string name="title_activity_game_view">GameView</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="leave_message">Your progress is saved.\nIt will be as same as you left it.</string>
+    <string name="err">SOME ERROR OCCURRED</string>
+    <string name="nic">NO INTERNET CONNECTION</string>
+    <string name="msg">Single-line marquee text view that scrolls automatically.</string>
+
+    <string name="rules">Rules of the game is displayed here</string>
+    <string name="prize">Rewards obtained are mentioned here</string>
+
+    <string name="claim">Claim Your Prize</string>
+    <string name="claim_desc">Call any of the below numbers to claim your prize</string>
+
+    <string name="rs">\u20b9</string>
+    <string name="title_activity_namma_tv_main">NammaTvMainActivity</string>
 </resources>
