@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.housey.aeiton.R;
 import com.housey.aeiton.Utils.DataSingleton;
+import com.housey.aeiton.Utils.HawkSingleton;
 import com.housey.aeiton.Utils.NetworkSingleton;
 import com.orhanobut.hawk.Hawk;
 
@@ -33,6 +34,7 @@ import java.util.Map;
 import static com.housey.aeiton.Utils.Constants.BASE_URL;
 import static com.housey.aeiton.Utils.Constants.GET_UID;
 import static com.housey.aeiton.Utils.Constants.ISREGISTERED;
+import static com.housey.aeiton.Utils.Constants.REGISTRATION_KEY;
 import static com.housey.aeiton.Utils.Constants.REQUEST_KEY;
 
 // TODO: 23-06-2017 change NammaTvMainActivity to respective NavigationDrawerActivity
@@ -42,13 +44,13 @@ public class Registration extends NammaTvMainActivity {
     String emailString;
     ProgressDialog dialog;
     String TAG = "REGISTRATION";
-    boolean isRegistered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_registration, constraintLayout);
         setTitle("");
+
         name = (EditText) findViewById(R.id.name_input);
         email = (EditText) findViewById(R.id.email_input);
         phone = (EditText) findViewById(R.id.phone_input);
@@ -57,9 +59,7 @@ public class Registration extends NammaTvMainActivity {
         dialog = new ProgressDialog(this);
         dialog.setMessage("Loading Please Wait");
         dialog.setIndeterminate(true);
-        dialog.setTitle("Loading");
-
-        Hawk.init(getApplicationContext()).build();
+        dialog.setTitle("Loading...");
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,11 +113,12 @@ public class Registration extends NammaTvMainActivity {
                             JSONObject object = new JSONObject(response);
                             DataSingleton.userId = object.getInt("id");
                             Toast.makeText(Registration.this, object.getString("msg"), Toast.LENGTH_SHORT).show();
+                            saveData();
                             dialog.cancel();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        saveData();
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -144,8 +145,7 @@ public class Registration extends NammaTvMainActivity {
     }
 
     private void saveData() {
-
-        Hawk.put(ISREGISTERED, true);
+        getSharedPreferences(REGISTRATION_KEY, MODE_PRIVATE).edit().putBoolean(ISREGISTERED, true).apply();
         startActivity(new Intent(Registration.this, Splash.class));
         finish();
     }

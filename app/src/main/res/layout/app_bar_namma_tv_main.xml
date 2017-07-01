@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.housey.aeiton.Activity.NammaTvMainActivity">
-
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,10 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/FullscreenTheme.PopupOverlay" />
+            app:popupTheme="@style/FullscreenTheme.PopupOverlay" >
+
+        </android.support.v7.widget.Toolbar>
+
 
     </android.support.design.widget.AppBarLayout>
-
     <include layout="@layout/content_namma_tv_main" />
 
 </android.support.design.widget.CoordinatorLayout>

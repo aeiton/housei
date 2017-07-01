@@ -16,6 +16,9 @@ public class Constants {
     /* Used to get card*/
     public static final String CARD_URL = "card.php";
 
+    /* Youtube Links here*/
+    public static final String LINK = "http://www.youtube.com/";
+
 
     /*---------Permissions Here------*/
 

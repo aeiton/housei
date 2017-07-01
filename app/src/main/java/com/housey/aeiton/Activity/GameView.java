@@ -4,18 +4,27 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.AsyncTaskCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -27,6 +36,7 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -38,6 +48,7 @@ import com.housey.aeiton.Adapters.RecyclerAdapter;
 import com.housey.aeiton.R;
 import com.housey.aeiton.Utils.Constants;
 import com.housey.aeiton.Utils.DataSingleton;
+import com.housey.aeiton.Utils.HawkSingleton;
 import com.housey.aeiton.Utils.HouseyNumber;
 import com.housey.aeiton.Utils.Rewards;
 import com.orhanobut.hawk.Hawk;
@@ -51,7 +62,11 @@ import java.util.Queue;
 
 import static com.housey.aeiton.Utils.Constants.ISCARD;
 import static com.housey.aeiton.Utils.Constants.ISPLAYED;
+import static com.housey.aeiton.Utils.Constants.ISREGISTERED;
+import static com.housey.aeiton.Utils.Constants.LINK;
+import static com.housey.aeiton.Utils.Constants.REGISTRATION_KEY;
 import static com.housey.aeiton.Utils.Constants.SELECTEDNO;
+import static com.housey.aeiton.Utils.Constants.USER_ID;
 import static com.housey.aeiton.Utils.DataSingleton.adPaths;
 import static com.housey.aeiton.Utils.DataSingleton.caller;
 import static com.housey.aeiton.Utils.DataSingleton.card;
@@ -79,7 +94,7 @@ public class GameView extends AppCompatActivity {
     RecyclerView.Adapter adapter;
     GridView gv;
     RecyclerView recyclerView;
-    ImageButton reset, prize, back, rules, rpClose;
+    ImageButton reset, prize, rules, rpClose;
     LinearLayout call;
     TextView ticketNo, rewardsTv, marqueeText, gameDate;
 
@@ -91,8 +106,7 @@ public class GameView extends AppCompatActivity {
     Animation leftOpen, leftClose, topOpen, topClose, appear, disappear;
     int which, g = 0;
     int[] pos = {0, 1, 2, 0};
-    ListView lv;
-    Button cancel;
+    ActionMenuView actionMenuView;
 
     Handler m_handler;
     Runnable m_handlerTask;
@@ -102,6 +116,24 @@ public class GameView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_view);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        actionMenuView = (ActionMenuView) toolbar.findViewById(R.id.menumenu);
+
+        actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.namma_tv_live: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK))); return true;
+                    case R.id.namma_tv_yt: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK))); return true;
+                    case R.id.exit_game: onBackPressed(); return true;
+                }
+                return true;
+            }
+        });
+
+        setSupportActionBar(toolbar);
+       // toolbar.inflateMenu(R.menu.game_view_menu);
 
         reset = (ImageButton) findViewById(R.id.reset);
         undo = (ImageButton) findViewById(R.id.undo);
@@ -111,20 +143,18 @@ public class GameView extends AppCompatActivity {
         gameDate = (TextView) findViewById(R.id.game_date);
         rewardsTv = (TextView) findViewById(R.id.rewards_tv);
 
-        adBanner1 = (ImageSwitcher) findViewById(R.id.adBanner1);
-        adBanner2 = (ImageSwitcher) findViewById(R.id.adBanner2);
-        adBanner3 = (ImageSwitcher) findViewById(R.id.adBanner3);
+        adBanner1 = (ImageSwitcher) findViewById(R.id.ad_banner1);
+        adBanner2 = (ImageSwitcher) findViewById(R.id.ad_banner2);
+        adBanner3 = (ImageSwitcher) findViewById(R.id.ad_banner3);
 
         marqueeText = (TextView) findViewById(R.id.marqueeText);
 
         prize = (ImageButton) findViewById(R.id.prize);
-        back = (ImageButton) findViewById(R.id.back_btn);
         rules = (ImageButton) findViewById(R.id.rules);
 
         gv = (GridView) findViewById(R.id.gridview);
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
 
-//        initRecycler(3);
         makeInvisible();
         setUpAnimation();
         setUpAdBanners();
@@ -133,7 +163,7 @@ public class GameView extends AppCompatActivity {
         Log.d("CardResponse", cardResponse);
         parseCard(cardResponse);
 
-        isPlayed = Hawk.get(ISPLAYED, false);
+        isPlayed = HawkSingleton.getInstance().hawkGet(ISPLAYED, false);
         if (isPlayed) retriveList();
 
         ticketNo.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +176,7 @@ public class GameView extends AppCompatActivity {
             }
         });
 
-        reset.setOnClickListener(new View.OnClickListener() {
+       reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -156,7 +186,7 @@ public class GameView extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 selectedNos.clear();
-                                Hawk.put(SELECTEDNO, "");
+                                HawkSingleton.getInstance().hawkPut(SELECTEDNO, "");
                                 for (HouseyNumber h : card)
                                     h.unSelect();
                                 gv.setAdapter(new CustomGridAdapter(GameView.this));
@@ -191,13 +221,6 @@ public class GameView extends AppCompatActivity {
             }
         });
 
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
         rules.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,6 +308,7 @@ public class GameView extends AppCompatActivity {
                 makeInvisible();
             }
         });
+
     }
 
 
@@ -293,6 +317,7 @@ public class GameView extends AppCompatActivity {
 
         Log.d("onPause", "PAUSED");
         saveList();
+        m_handler.removeCallbacks(m_handlerTask);
         super.onPause();
     }
 
@@ -301,12 +326,29 @@ public class GameView extends AppCompatActivity {
 
         Log.d("onDestroy", "DESTROYED");
         saveList();
+        m_handler.removeCallbacks(m_handlerTask);
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.game_view_menu, actionMenuView.getMenu());
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        /*switch (item.getItemId()){
+            case R.id.namma_tv_live: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK)));
+            case R.id.namma_tv_yt: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK)));
+            case R.id.exit_game: onBackPressed();
+        }*/
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -398,10 +440,10 @@ public class GameView extends AppCompatActivity {
             setTicketNum(cardNo);
 
             marqueeText.setSelected(true);
-            gameDate.setSelected(true);
+//            gameDate.setSelected(true);
             marqueeText.setText(marquee);
 
-            gameDate.setText("Game Date: " + date);
+//            gameDate.setText("Game Date: " + date);
             if (cardPattern != null)
                 splitTicket();
             else {
@@ -430,13 +472,13 @@ public class GameView extends AppCompatActivity {
     }
 
     private void saveData() {
-        Hawk.init(getApplicationContext()).build();
-        Hawk.put(Constants.RESPONSE, response);
-        Hawk.put(Constants.ISCARD, true);
-        Hawk.put(Constants.USER_ID, userId);
-        Hawk.put(Constants.VALIDITY, valid);
-        Hawk.put(Constants.SELECTEDNO, array.toString());
-        Hawk.put(Constants.ISPLAYED, isPlayed);
+
+        getSharedPreferences(REGISTRATION_KEY, MODE_PRIVATE).edit().putInt(USER_ID, userId).apply();
+        HawkSingleton.getInstance().hawkPut(Constants.RESPONSE, response);
+        HawkSingleton.getInstance().hawkPut(Constants.ISCARD, true);
+        HawkSingleton.getInstance().hawkPut(Constants.VALIDITY, valid);
+        HawkSingleton.getInstance().hawkPut(Constants.SELECTEDNO, array.toString());
+        HawkSingleton.getInstance().hawkPut(Constants.ISPLAYED, isPlayed);
 
     }
 
@@ -456,7 +498,7 @@ public class GameView extends AppCompatActivity {
     }
 
     private void retriveList() {
-        String jArray = Hawk.get(SELECTEDNO);
+        String jArray = HawkSingleton.getInstance().hawkGet(SELECTEDNO);
         JSONObject obj;
         int num;
         try {
@@ -472,7 +514,7 @@ public class GameView extends AppCompatActivity {
                 else {
                     startActivity(new Intent(GameView.this, Splash.class));
                     GameView.this.finish();
-                    Hawk.put(ISCARD, false);
+                    HawkSingleton.getInstance().hawkPut(ISCARD, false);
                 }
             }
         } catch (JSONException e) {
@@ -521,7 +563,7 @@ public class GameView extends AppCompatActivity {
                     }
                 };
 
-                m_handler.postDelayed(m_handlerTask, 10000);
+                m_handler.postDelayed(m_handlerTask, 30000);
             }
         });
 
@@ -554,87 +596,6 @@ public class GameView extends AppCompatActivity {
 
         CustomDialog cd = CustomDialog.newInstance(getApplicationContext());
         cd.show(getSupportFragmentManager(), "customDialog");
-        
-
-      /*  cd.getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        Window window = cd.getDialog().getWindow();
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);*/
-/*
-        final AppCompatDialog dialog = new AppCompatDialog(getBaseContext());
-        dialog.setContentView(R.layout.claim_custom_layout);
-        lv = (ListView) dialog.findViewById(R.id.listView);
-
-        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.claim_single_item, R.id.phone_num_tv, caller);
-        lv.setAdapter(adapter);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + caller[position])));
-            }
-        });
-        dialog.show();*/
-/*
-        final Dialog dialog = new Dialog(GameView.this);
-        dialog.setContentView(R.layout.claim_custom_layout);
-        dialog.show();
-
-        //  ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout);
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        params.width = 1180;
-        params.height = 920;
-
-        dialog.getWindow().setAttributes(params);
-        lv = (ListView) dialog.findViewById(R.id.listView);
-
-        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.claim_single_item, R.id.phone_num_tv, caller);
-        lv.setAdapter(adapter);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + caller[position])));
-            }
-        });
-        */
-
-       /* new MaterialDialog.Builder(this)
-                .title("Claim Your Prize")
-                .content("Call any of the below shown phone numbers to claim your prize")
-//                .customView(R.layout.claim_custom_layout, false)
-                .items(caller)
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + caller[i])));
-                    }
-                })
-                .cancelable(false)
-                .negativeText("CANCEL")
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        materialDialog.dismiss();
-                    }
-                })
-                .show();
-*/
-        /*final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("Call and claim your prize")
-                .setItems(caller, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(GameView.this, "Call PLaced " + caller[which], Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setCancelable(false)
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
-    */
     }
 
     private void setTicketNum(String num) {

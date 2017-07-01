@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title=""
+        android:id="@+id/of"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:orderInCategory="101"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/namma_tv_yt"
+                android:icon="@drawable/youtube_menu_item"
+                android:title="NammaTV YouTube" />
+
+            <item
+                android:id="@+id/namma_tv_live"
+                android:icon="@drawable/ic_live_tv_black_24dp"
+                android:title="NammaTV Live" />
+
+            <item
+                android:id="@+id/exit_game"
+                android:icon="@drawable/ic_close_black_24dp"
+                android:title="Quit Game" />
+
+        </menu>
+    </item>
+
+</menu>

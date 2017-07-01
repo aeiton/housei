@@ -1,6 +1,7 @@
 package com.housey.aeiton.Utils;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 

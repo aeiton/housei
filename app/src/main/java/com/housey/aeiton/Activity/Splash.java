@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 
 import com.housey.aeiton.R;
 import com.housey.aeiton.Utils.DataSingleton;
+import com.housey.aeiton.Utils.HawkSingleton;
 import com.housey.aeiton.Utils.NetworkSingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -61,28 +62,27 @@ public class Splash extends NammaTvMainActivity {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_splash, constraintLayout);
 
-        setTitle("");
+        HawkSingleton.getInstance().init(getApplicationContext());
 
-        Hawk.init(getApplicationContext()).build();
+        setTitle("");
 
         play = (ImageButton) findViewById(R.id.actionButton);
 
         //Enable this to make this app OFFLINE compitable
-        isCard = Hawk.get(ISCARD, false);
+        isCard = HawkSingleton.getInstance().hawkGet(ISCARD, false);
 
         intent = new Intent(Splash.this, GameView.class);
 
-        isRegistered = Hawk.get(ISREGISTERED, false);
+        isRegistered = getSharedPreferences(REGISTRATION_KEY, MODE_PRIVATE).getBoolean(ISREGISTERED, false);
 
         if (!isRegistered){
             startActivity(new Intent(Splash.this, Registration.class));
-            finish();
-            return;
+            Splash.this.finish();
         }
 
         startTheEngine();
 
-//getCard();
+
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,18 +107,32 @@ public class Splash extends NammaTvMainActivity {
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
     private void startTheEngine() {
         if (isCard) {
-            valid = Hawk.get(VALIDITY);
-            response = Hawk.get(RESPONSE);
-            userId = Hawk.get(USER_ID, 0);
+            valid =     HawkSingleton.getInstance().hawkGet(VALIDITY);
+            response =  HawkSingleton.getInstance().hawkGet(RESPONSE);
+            userId =    getSharedPreferences(REGISTRATION_KEY, MODE_PRIVATE).getInt(USER_ID, 0);
+            Log.d("checkCard", "starttheEngine");
             checkCardValidity();
         } else if (isconnected()) {
+            Log.d("getcard", "startTheEngine");
             getCard();
         } else showSnackbar(getString(R.string.nic), true);
     }
 
     private void getCard() {
+        Log.d("getcard", "called");
         StringRequest request = new StringRequest(StringRequest.Method.POST, BASE_URL+CARD_URL,
                 new Response.Listener<String>() {
                     @Override
@@ -136,12 +150,14 @@ public class Splash extends NammaTvMainActivity {
                             } else if (status == 1) {
                                 valid = object.getString("valid_till");
                                 showSnackbar(object.getString("msg"), false);
+                                Log.d("checkCard", "status=1");
                                 checkCardValidity();
                                 //send response to GameView.java while opening it
                                 intent.putExtra("CARDRESPONSE", response);
                             } else if (status == 2) {
                                 valid = object.getString("valid_till");
                                 showSnackbar(object.getString("msg"), false);
+                                Log.d("checkCard", "status=2");
                                 checkCardValidity();
                                 //send response to GameView.java while opening it
                                 intent.putExtra("CARDRESPONSE", response);
@@ -197,12 +213,13 @@ public class Splash extends NammaTvMainActivity {
 
             if (validDate.compareTo(actualDate) < 0) {
                 //validity has expired
-                Hawk.deleteAll();
+                HawkSingleton.getInstance().hawkDeleteAll();
+                Log.d("getcard", "checkCardAvail");
                 getCard();
             } else {
-                        Hawk.put(ISCARD, true);
-                        Hawk.put(VALIDITY, valid);
-                        Hawk.put(RESPONSE, response);
+                        HawkSingleton.getInstance().hawkPut(ISCARD, true);
+                        HawkSingleton.getInstance().hawkPut(VALIDITY, valid);
+                        HawkSingleton.getInstance().hawkPut(RESPONSE, response);
                 success = true;
             }
         } catch (ParseException e) {
