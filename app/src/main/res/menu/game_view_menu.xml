@@ -10,14 +10,50 @@
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/namma_tv_yt"
-                android:icon="@drawable/youtube_menu_item"
-                android:title="NammaTV YouTube" />
+                android:id="@+id/news"
+                android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:title="News" />
 
             <item
-                android:id="@+id/namma_tv_live"
-                android:icon="@drawable/ic_live_tv_black_24dp"
-                android:title="NammaTV Live" />
+                android:id="@+id/regional_news"
+                android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:title="Regional News" />
+
+            <item
+                android:id="@+id/gulf_news"
+                android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:title="Gulf News" />
+
+            <item
+                android:id="@+id/mumbai_news"
+                android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:title="Mumbai News" />
+
+            <group>
+
+                <item
+                    android:id="@+id/namma_live"
+                    android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+                    android:title="Namma Tv Live" />
+            </group>
+            <group>
+                <item
+                    android:id="@+id/bale_telipale"
+                    android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+                    android:title="Bale Telipale" />
+
+                <item
+                    android:id="@+id/programmes"
+                    android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+                    android:title="Programmes" />
+
+            </group>
+
+            <item
+                android:id="@+id/settings"
+                android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:title="Settings" />
+
 
             <item
                 android:id="@+id/exit_game"

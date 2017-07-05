@@ -9,20 +9,21 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp"
-        android:theme="@style/FullscreenTheme.AppBarOverlay">
+        android:theme="@style/FullscreenTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/FullscreenTheme.PopupOverlay" >
+            app:popupTheme="@style/FullscreenTheme.PopupOverlay">
+
             <android.support.v7.widget.ActionMenuView
-                app:menu="@menu/game_view_menu"
                 android:id="@+id/menumenu"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                app:menu="@menu/game_view_menu"
                 app:theme="@style/MenuItemsTheme">
 
             </android.support.v7.widget.ActionMenuView>
@@ -104,9 +105,9 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/how_icon"
                     android:tint="#ffffff" />
+
                 <LinearLayout
                     android:id="@+id/call"
-                    android:gravity="end"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/claim_button"
@@ -131,12 +132,14 @@
                         android:text="Claim"
                         android:textColor="#ffffff"
                         android:textSize="17sp" />
+
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
 
 
     </android.support.design.widget.AppBarLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -211,21 +214,6 @@
                                 android:scrollbars="none" />
 
                         </android.support.v7.widget.CardView>
-                        <!--
-                                                <TextView
-                                                    android:id="@+id/r_p_tv"
-                                                    android:layout_width="match_parent"
-                                                    android:layout_height="match_parent"
-                                                    android:layout_margin="5dp"
-                                                    android:background="#fff"
-                                                    android:paddingEnd="@dimen/activity_horizontal_margin"
-                                                    android:paddingRight="@dimen/activity_horizontal_margin"
-                                                    android:paddingStart="@dimen/activity_horizontal_margin"
-                                                    android:paddingTop="40dp"
-                                                    android:text="@string/leave_message"
-                                                    android:textColor="@color/colorPrimary"
-                                                    android:textSize="18sp" />-->
-
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/recycler"
@@ -283,7 +271,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -292,22 +280,19 @@
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/banner2"
+                    <ImageSwitcher
+                        android:id="@+id/ad_banner2"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
                         android:scaleType="fitXY" />
 
-                    <ImageView
-                        android:id="@+id/banner3"
+                    <ImageSwitcher
+                        android:id="@+id/ad_banner3"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
                         android:scaleType="fitXY" />
-
 
                 </LinearLayout>
 
@@ -317,15 +302,11 @@
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/banner1"
+                    <ImageSwitcher
+                        android:id="@+id/ad_banner1"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_weight="2"
-                        android:background="@color/colorAccent"
-                        android:scaleType="fitXY" />
-
+                        android:layout_weight="2" />
 
                     <com.lb.auto_fit_textview.AutoResizeTextView
                         android:id="@+id/marqueeText"
@@ -343,6 +324,7 @@
                         android:singleLine="true"
                         android:text="@string/msg"
                         android:textColor="#ffffff" />
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

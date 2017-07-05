@@ -90,7 +90,7 @@ public class Splash extends NammaTvMainActivity {
                     intent.putExtra("CARDRESPONSE", response);
                     startActivity(intent);
                     finish();
-                } else {
+            } else {
                     showSnackbar("LOADING... PLEASE WAIT", true);
                     startTheEngine();
                 }
@@ -191,7 +191,7 @@ public class Splash extends NammaTvMainActivity {
     }
 
     private void showSnackbar(String message, boolean doRetry) {
-        snackbar = Snackbar.make(play, message, Snackbar.LENGTH_INDEFINITE);
+        snackbar = Snackbar.make(play, message, Snackbar.LENGTH_LONG);
         if (doRetry) {
             snackbar.setAction("RETRY", new View.OnClickListener() {
                 @Override

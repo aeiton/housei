@@ -2,11 +2,13 @@ package com.housey.aeiton.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.internal.NavigationMenuView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -80,9 +82,9 @@ public class NammaTvMainActivity extends AppCompatActivity
         if (id == R.id.housey) {
             startActivity(new Intent(NammaTvMainActivity.this, Splash.class));
 
-       }  else if (id == R.id.test_frag) {
+       } /* else if (id == R.id.test_frag) {
             startActivity(new Intent(this, TestActivity.class));
-        }/* else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
 

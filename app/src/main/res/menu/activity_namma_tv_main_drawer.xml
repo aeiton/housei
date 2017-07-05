@@ -3,15 +3,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <group>
+        <item
+            android:id="@+id/news"
+            android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:title="News" />
+
+        <item
+            android:id="@+id/regional_news"
+            android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:title="Regional News" />
+
+        <item
+            android:id="@+id/gulf_news"
+            android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:title="Gulf News" />
+
+        <item
+            android:id="@+id/mumbai_news"
+            android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:title="Mumbai News" />
+    </group>
+
+
+    <group>
+        <item
+            android:id="@+id/namma_live"
+            android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:title="Namma Tv Live" />
+    </group>
+
+
+    <group>
+        <item
+            android:id="@+id/bale_telipale"
+            android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:title="Bale Telipale" />
+
+        <item
+            android:id="@+id/programmes"
+            android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:title="Programmes" />
         <item
             android:id="@+id/housey"
             android:icon="@drawable/circle_bg"
             android:title="Housey" />
+    </group>
 
-        <item
-                android:id="@+id/test_frag"
-                android:icon="@drawable/how_icon"
-                android:title="Test Fragment"
-                />
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+        android:title="Settings" />
 
 </menu>

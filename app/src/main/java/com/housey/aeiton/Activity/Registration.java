@@ -67,22 +67,23 @@ public class Registration extends NammaTvMainActivity {
                 emailString = email.getText().toString();
                 if (network()) {
                     if (name.getText().length() < 4) {
+                        name.requestFocus();
                         name.setError("Please, Enter your full name");
                         return;
                     }
                     if (phone.getText().length() < 10 || !TextUtils.isDigitsOnly(phone.getText())) {
+                        phone.requestFocus();
                         phone.setError("Please, Enter a valid phone number");
                         return;
                     }
                     if (!TextUtils.isEmpty(emailString)) {
                         emailString = emailString.trim();
                         if (!Patterns.EMAIL_ADDRESS.matcher(emailString).matches()) {
+                            email.requestFocus();
                             email.setError("Please, Enter a valid Email ID");
                             return;
                         }
                     }
-
-
                     dialog.show();
                     sendToBE();
                 } else {

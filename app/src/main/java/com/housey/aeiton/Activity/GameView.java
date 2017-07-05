@@ -4,19 +4,14 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.AsyncTaskCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDialog;
-import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,15 +23,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -51,19 +42,14 @@ import com.housey.aeiton.Utils.DataSingleton;
 import com.housey.aeiton.Utils.HawkSingleton;
 import com.housey.aeiton.Utils.HouseyNumber;
 import com.housey.aeiton.Utils.Rewards;
-import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Queue;
-
 import static com.housey.aeiton.Utils.Constants.ISCARD;
 import static com.housey.aeiton.Utils.Constants.ISPLAYED;
-import static com.housey.aeiton.Utils.Constants.ISREGISTERED;
-import static com.housey.aeiton.Utils.Constants.LINK;
 import static com.housey.aeiton.Utils.Constants.REGISTRATION_KEY;
 import static com.housey.aeiton.Utils.Constants.SELECTEDNO;
 import static com.housey.aeiton.Utils.Constants.USER_ID;
@@ -110,6 +96,7 @@ public class GameView extends AppCompatActivity {
 
     Handler m_handler;
     Runnable m_handlerTask;
+    int firstTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,17 +110,19 @@ public class GameView extends AppCompatActivity {
         actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.namma_tv_live: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK))); return true;
-                    case R.id.namma_tv_yt: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK))); return true;
-                    case R.id.exit_game: onBackPressed(); return true;
+                switch (item.getItemId()) {
+                    /*case R.id.namma_tv_live: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK))); return true;
+                    case R.id.namma_tv_yt: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(LINK))); return true;*/
+                    case R.id.exit_game:
+                        onBackPressed();
+                        return true;
                 }
                 return true;
             }
         });
 
         setSupportActionBar(toolbar);
-       // toolbar.inflateMenu(R.menu.game_view_menu);
+        // toolbar.inflateMenu(R.menu.game_view_menu);
 
         reset = (ImageButton) findViewById(R.id.reset);
         undo = (ImageButton) findViewById(R.id.undo);
@@ -160,7 +149,7 @@ public class GameView extends AppCompatActivity {
         setUpAdBanners();
 
         cardResponse = getIntent().getStringExtra("CARDRESPONSE");
-        Log.d("CardResponse", cardResponse);
+        Log.d("CardResponse", " " + cardResponse);
         parseCard(cardResponse);
 
         isPlayed = HawkSingleton.getInstance().hawkGet(ISPLAYED, false);
@@ -176,7 +165,7 @@ public class GameView extends AppCompatActivity {
             }
         });
 
-       reset.setOnClickListener(new View.OnClickListener() {
+        reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -440,10 +429,10 @@ public class GameView extends AppCompatActivity {
             setTicketNum(cardNo);
 
             marqueeText.setSelected(true);
-//            gameDate.setSelected(true);
+            gameDate.setSelected(true);
             marqueeText.setText(marquee);
 
-//            gameDate.setText("Game Date: " + date);
+            gameDate.setText("Game Date: " + date);
             if (cardPattern != null)
                 splitTicket();
             else {
@@ -523,6 +512,7 @@ public class GameView extends AppCompatActivity {
     }
 
     private void displayAds() {
+        firstTime++;
 
         m_handler = new Handler(Looper.getMainLooper());
 
@@ -548,12 +538,18 @@ public class GameView extends AppCompatActivity {
 
                 Picasso.with(getApplicationContext())
                         .load(adPaths.get(pos[0]))
+                        .placeholder(R.drawable.banner_1)
+                        .error(R.drawable.banner_1)
                         .into(switcher1);
                 Picasso.with(getApplicationContext())
                         .load(adPaths.get(pos[1]))
+                        .placeholder(R.drawable.banner_1)
+                        .error(R.drawable.banner_1)
                         .into(switcher2);
                 Picasso.with(getApplicationContext())
                         .load(adPaths.get(pos[2]))
+                        .placeholder(R.drawable.banner_1)
+                        .error(R.drawable.banner_1)
                         .into(switcher3);
 
                 m_handlerTask = new Runnable() {
@@ -562,8 +558,11 @@ public class GameView extends AppCompatActivity {
                         displayAds();
                     }
                 };
+                int time1 = 1000, time2 = 30000;
+                if (firstTime == 1)
+                    m_handler.postDelayed(m_handlerTask, time1);
+                else m_handler.postDelayed(m_handlerTask, time2);
 
-                m_handler.postDelayed(m_handlerTask, 30000);
             }
         });
 
