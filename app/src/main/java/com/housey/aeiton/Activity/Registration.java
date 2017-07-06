@@ -36,6 +36,8 @@ import static com.housey.aeiton.Utils.Constants.GET_UID;
 import static com.housey.aeiton.Utils.Constants.ISREGISTERED;
 import static com.housey.aeiton.Utils.Constants.REGISTRATION_KEY;
 import static com.housey.aeiton.Utils.Constants.REQUEST_KEY;
+import static com.housey.aeiton.Utils.Constants.USER_ID;
+import static com.housey.aeiton.Utils.DataSingleton.userId;
 
 // TODO: 23-06-2017 change NammaTvMainActivity to respective NavigationDrawerActivity
 public class Registration extends NammaTvMainActivity {
@@ -114,7 +116,7 @@ public class Registration extends NammaTvMainActivity {
                             JSONObject object = new JSONObject(response);
                             DataSingleton.userId = object.getInt("id");
                             Toast.makeText(Registration.this, object.getString("msg"), Toast.LENGTH_SHORT).show();
-                            saveData();
+                            saveData(object.getInt("id"));
                             dialog.cancel();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -145,8 +147,10 @@ public class Registration extends NammaTvMainActivity {
 
     }
 
-    private void saveData() {
+    private void saveData(int id) {
         getSharedPreferences(REGISTRATION_KEY, MODE_PRIVATE).edit().putBoolean(ISREGISTERED, true).apply();
+        getSharedPreferences(REGISTRATION_KEY, MODE_PRIVATE).edit().putInt(USER_ID, id).apply();
+        Log.d("userid", " " + userId + " " + id);
         startActivity(new Intent(Registration.this, Splash.class));
         finish();
     }

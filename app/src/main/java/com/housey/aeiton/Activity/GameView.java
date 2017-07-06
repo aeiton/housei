@@ -558,7 +558,7 @@ public class GameView extends AppCompatActivity {
                         displayAds();
                     }
                 };
-                int time1 = 1000, time2 = 30000;
+                int time1 = 3000, time2 = 30000; //switch ads after 3 secs (time to download
                 if (firstTime == 1)
                     m_handler.postDelayed(m_handlerTask, time1);
                 else m_handler.postDelayed(m_handlerTask, time2);
