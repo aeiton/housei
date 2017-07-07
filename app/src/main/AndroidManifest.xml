@@ -30,6 +30,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.Splash"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".Activity.TestActivity"

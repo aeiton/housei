@@ -2,29 +2,25 @@ package com.housey.aeiton.Activity;
 
 import android.content.Context;
 import android.content.Intent;
-
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.housey.aeiton.R;
-import com.housey.aeiton.Utils.DataSingleton;
-import com.housey.aeiton.Utils.HawkSingleton;
-import com.housey.aeiton.Utils.NetworkSingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.orhanobut.hawk.Hawk;
+import com.housey.aeiton.R;
+import com.housey.aeiton.Utils.DataSingleton;
+import com.housey.aeiton.Utils.HawkSingleton;
+import com.housey.aeiton.Utils.NetworkSingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.housey.aeiton.Utils.Constants.BASE_URL;
-import static com.housey.aeiton.Utils.Constants.CARD_KEY;
 import static com.housey.aeiton.Utils.Constants.CARD_URL;
 import static com.housey.aeiton.Utils.Constants.ISCARD;
 import static com.housey.aeiton.Utils.Constants.ISREGISTERED;
@@ -49,8 +44,6 @@ import static com.housey.aeiton.Utils.Constants.VALIDITY;
 import static com.housey.aeiton.Utils.DataSingleton.response;
 import static com.housey.aeiton.Utils.DataSingleton.userId;
 import static com.housey.aeiton.Utils.DataSingleton.valid;
-import static com.housey.aeiton.Utils.Constants.ISCARD;
-import static com.housey.aeiton.Utils.Constants.ISREGISTERED;
 
 // TODO: 23-06-2017 change NammaTvMainActivity to respective NavigationDrawerActivity
 public class Splash extends NammaTvMainActivity {
@@ -78,6 +71,7 @@ public class Splash extends NammaTvMainActivity {
 
         //Enable this to make this app OFFLINE compitable
         isCard = HawkSingleton.getInstance().hawkGet(ISCARD, false);
+        Log.d("Iscard", isCard + " ");
 
         intent = new Intent(Splash.this, GameView.class);
 
@@ -86,11 +80,10 @@ public class Splash extends NammaTvMainActivity {
         userId = getSharedPreferences(REGISTRATION_KEY, MODE_PRIVATE).getInt(USER_ID, 0);
         Log.d("userid", " " + userId);
 
-        if (!isRegistered){
+        if (!isRegistered) {
             startActivity(new Intent(Splash.this, Registration.class));
             Splash.this.finish();
-        }
-        else startTheEngine();
+        } else startTheEngine();
 
 
         play.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +93,7 @@ public class Splash extends NammaTvMainActivity {
                 if (pro.getVisibility() == View.INVISIBLE) {
                     if (success) {
                         intent.putExtra("CARDRESPONSE", response);
+                        checkCardValidity();
                         startActivity(intent);
                         finish();
                     } else {
@@ -115,8 +109,10 @@ public class Splash extends NammaTvMainActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        pro.setVisibility(View.INVISIBLE);
+        play.setVisibility(View.VISIBLE);
         // TODO: 23-06-2017 Change the index '0' to the position of "HOUSEY" in nav drawer
-        navigationView.getMenu().getItem(0).setChecked(true);
+        navigationView.getMenu().getItem(7).setChecked(true);
     }
 
     @Override
@@ -135,8 +131,8 @@ public class Splash extends NammaTvMainActivity {
         play.setVisibility(View.INVISIBLE);
 
         if (isCard) {
-            valid =     HawkSingleton.getInstance().hawkGet(VALIDITY);
-            response =  HawkSingleton.getInstance().hawkGet(RESPONSE);
+            valid = HawkSingleton.getInstance().hawkGet(VALIDITY);
+            response = HawkSingleton.getInstance().hawkGet(RESPONSE);
             Log.d("checkCard", "starttheEngine");
             checkCardValidity();
         } else if (isconnected()) {
@@ -146,8 +142,10 @@ public class Splash extends NammaTvMainActivity {
     }
 
     private void getCard() {
+        pro.setVisibility(View.VISIBLE);
+        play.setVisibility(View.INVISIBLE);
         Log.d("getcard", "called");
-        StringRequest request = new StringRequest(StringRequest.Method.POST, BASE_URL+CARD_URL,
+        StringRequest request = new StringRequest(StringRequest.Method.POST, BASE_URL + CARD_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -161,6 +159,7 @@ public class Splash extends NammaTvMainActivity {
                             Log.d("resp", response);
                             if (status == 0) {
                                 showSnackbar(object.getString("msg"), false);
+                                isCard = false;
                                 success = false;
                             } else if (status == 1) {
                                 valid = object.getString("valid_till");
@@ -211,6 +210,8 @@ public class Splash extends NammaTvMainActivity {
 
     private void showSnackbar(String message, boolean doRetry) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        pro.setVisibility(View.INVISIBLE);
+        play.setVisibility(View.VISIBLE);
     }
 
     private void checkCardValidity() {
@@ -220,15 +221,20 @@ public class Splash extends NammaTvMainActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
             Date actualDate = sdf.parse(sdf.format(cal.getTime()));
             Date validDate = sdf.parse(valid);
+            Log.d("dae", validDate + " " + actualDate);
 
             if (validDate.compareTo(actualDate) < 0) {
                 //validity has expired
+                Log.d("CardExp", "yes");
                 HawkSingleton.getInstance().hawkDeleteAll();
+                isCard = false;
                 getCard();
             } else {
-                        HawkSingleton.getInstance().hawkPut(ISCARD, true);
-                        HawkSingleton.getInstance().hawkPut(VALIDITY, valid);
-                        HawkSingleton.getInstance().hawkPut(RESPONSE, response);
+                Log.d("cardExp", "No");
+                isCard = true;
+                HawkSingleton.getInstance().hawkPut(ISCARD, true);
+                HawkSingleton.getInstance().hawkPut(VALIDITY, valid);
+                HawkSingleton.getInstance().hawkPut(RESPONSE, response);
                 success = true;
                 pro.setVisibility(View.INVISIBLE);
                 play.setVisibility(View.VISIBLE);

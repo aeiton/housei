@@ -102,7 +102,7 @@ public class Registration extends NammaTvMainActivity {
     protected void onResume() {
         super.onResume();
         // TODO: 23-06-2017 Change the index '0' to the position of "HOUSEY" in nav drawer
-        navigationView.getMenu().getItem(0).setChecked(true);
+        navigationView.getMenu().getItem(7).setChecked(true);
     }
 
     private void sendToBE() {
