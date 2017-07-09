@@ -39,7 +39,7 @@
             android:name=".Activity.GameView"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme" />
+            />
 
     </application>
 

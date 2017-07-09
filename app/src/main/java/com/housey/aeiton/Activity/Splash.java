@@ -1,15 +1,23 @@
 package com.housey.aeiton.Activity;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -17,6 +25,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.housey.aeiton.Adapters.CustomDialog;
 import com.housey.aeiton.R;
 import com.housey.aeiton.Utils.DataSingleton;
 import com.housey.aeiton.Utils.HawkSingleton;
@@ -54,6 +63,7 @@ public class Splash extends NammaTvMainActivity {
     boolean success = false, isCard = false, isRegistered = false;
     ProgressBar pro;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +72,6 @@ public class Splash extends NammaTvMainActivity {
         HawkSingleton.getInstance().init(getApplicationContext());
 
         setTitle("");
-
         play = (ImageButton) findViewById(R.id.actionButton);
         pro = (ProgressBar) findViewById(R.id.progress);
         pro.setVisibility(View.INVISIBLE);
@@ -93,7 +102,7 @@ public class Splash extends NammaTvMainActivity {
                 if (pro.getVisibility() == View.INVISIBLE) {
                     if (success) {
                         intent.putExtra("CARDRESPONSE", response);
-                        checkCardValidity();
+//                        checkCardValidity(1);
                         startActivity(intent);
                         finish();
                     } else {
@@ -134,7 +143,7 @@ public class Splash extends NammaTvMainActivity {
             valid = HawkSingleton.getInstance().hawkGet(VALIDITY);
             response = HawkSingleton.getInstance().hawkGet(RESPONSE);
             Log.d("checkCard", "starttheEngine");
-            checkCardValidity();
+            checkCardValidity(0);
         } else if (isconnected()) {
             Log.d("getcard", "startTheEngine");
             getCard();
@@ -163,17 +172,17 @@ public class Splash extends NammaTvMainActivity {
                                 success = false;
                             } else if (status == 1) {
                                 valid = object.getString("valid_till");
-                                showSnackbar(object.getString("msg"), false);
+//                                showSnackbar(object.getString("msg"), false);
                                 Log.d("checkCard", "status=1");
-                                checkCardValidity();
+                                checkCardValidity(0);
                                 //send response to GameView.java while opening it
                                 intent.putExtra("CARDRESPONSE", response);
                                 startActivity(intent);
                             } else if (status == 2) {
                                 valid = object.getString("valid_till");
-                                showSnackbar(object.getString("msg"), false);
+//                                showSnackbar(object.getString("msg"), false);
                                 Log.d("checkCard", "status=2");
-                                checkCardValidity();
+                                checkCardValidity(0);
                                 //send response to GameView.java while opening it
                                 intent.putExtra("CARDRESPONSE", response);
                                 startActivity(intent);
@@ -209,19 +218,24 @@ public class Splash extends NammaTvMainActivity {
     }
 
     private void showSnackbar(String message, boolean doRetry) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        CustomDialog cd = CustomDialog.newInstance(getApplicationContext(), 0, message);
+        cd.show(getSupportFragmentManager(), "customErrorDialog");
+        cd.setStyle(0, R.style.DialogTheme);
+
         pro.setVisibility(View.INVISIBLE);
         play.setVisibility(View.VISIBLE);
     }
 
-    private void checkCardValidity() {
+    private void checkCardValidity(int which) {
         try {
             //getActual date and time
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy kk:mm:ss");
             Date actualDate = sdf.parse(sdf.format(cal.getTime()));
             Date validDate = sdf.parse(valid);
-            Log.d("dae", validDate + " " + actualDate);
+            Log.d("actual", " " + actualDate);
+            Log.d("valid ",  "  " + validDate);
 
             if (validDate.compareTo(actualDate) < 0) {
                 //validity has expired

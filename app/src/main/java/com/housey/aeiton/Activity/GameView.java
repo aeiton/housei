@@ -89,7 +89,7 @@ public class GameView extends AppCompatActivity {
     ImageSwitcher adBanner1, adBanner2, adBanner3;
     PicassoImageSwitcher switcher1, switcher2, switcher3;
 
-    Animation leftOpen, leftClose, topOpen, topClose, appear, disappear;
+    Animation leftOpen, leftClose, appear, disappear;
     int which, g = 0;
     int[] pos = {0, 1, 2, 0};
     ActionMenuView actionMenuView;
@@ -255,7 +255,7 @@ public class GameView extends AppCompatActivity {
             public void onClick(View v) {
                 initRecycler(0);
                 rewardsTv.setText("Rewards");
-                rewardsTv.setVisibility(View.VISIBLE);
+              rewardsTv.setVisibility(View.VISIBLE);
                 rewardsTv.setCompoundDrawablesWithIntrinsicBounds(
                         ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_card_giftcard_black_24dp),
                         null,
@@ -558,7 +558,7 @@ public class GameView extends AppCompatActivity {
                         displayAds();
                     }
                 };
-                int time1 = 3000, time2 = 30000; //switch ads after 3 secs (time to download
+                int time1 = 3000, time2 = 3000; //switch ads after 3 secs (time to download
                 if (firstTime == 1)
                     m_handler.postDelayed(m_handlerTask, time1);
                 else m_handler.postDelayed(m_handlerTask, time2);
@@ -585,16 +585,15 @@ public class GameView extends AppCompatActivity {
     private void setUpAnimation() {
         leftOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rules_open_anim);
         leftClose = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rules_close_anim);
-        topOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.prize_open_anim);
-        topClose = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.prize_close_anim);
         appear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.btn_appear);
         disappear = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.btn_disappear);
     }
 
     private void makeACall() {
 
-        CustomDialog cd = CustomDialog.newInstance(getApplicationContext());
+        CustomDialog cd = CustomDialog.newInstance(getApplicationContext(), 1, " ");
         cd.show(getSupportFragmentManager(), "customDialog");
+        cd.setStyle(0, R.style.DialogTheme);
     }
 
     private void setTicketNum(String num) {

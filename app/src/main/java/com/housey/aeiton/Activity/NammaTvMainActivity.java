@@ -82,9 +82,9 @@ public class NammaTvMainActivity extends AppCompatActivity
         if (id == R.id.housey) {
             startActivity(new Intent(NammaTvMainActivity.this, Splash.class));
 
-       } /* else if (id == R.id.test_frag) {
+       }  else  {
             startActivity(new Intent(this, TestActivity.class));
-        } else if (id == R.id.nav_slideshow) {
+        } /*else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
 

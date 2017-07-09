@@ -21,9 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.housey.aeiton.R;
 import com.housey.aeiton.Utils.DataSingleton;
-import com.housey.aeiton.Utils.HawkSingleton;
 import com.housey.aeiton.Utils.NetworkSingleton;
-import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,13 +76,11 @@ public class Registration extends NammaTvMainActivity {
                         phone.setError("Please, Enter a valid phone number");
                         return;
                     }
-                    if (!TextUtils.isEmpty(emailString)) {
-                        emailString = emailString.trim();
-                        if (!Patterns.EMAIL_ADDRESS.matcher(emailString).matches()) {
-                            email.requestFocus();
-                            email.setError("Please, Enter a valid Email ID");
-                            return;
-                        }
+                    emailString = emailString.trim();
+                    if (!Patterns.EMAIL_ADDRESS.matcher(emailString).matches()) {
+                        email.requestFocus();
+                        email.setError("Please, Enter a valid Email ID");
+                        return;
                     }
                     dialog.show();
                     sendToBE();
@@ -93,10 +89,10 @@ public class Registration extends NammaTvMainActivity {
                     dialog.dismiss();
                 }
             }
-    });
+        });
 
 
-}
+    }
 
     @Override
     protected void onResume() {
