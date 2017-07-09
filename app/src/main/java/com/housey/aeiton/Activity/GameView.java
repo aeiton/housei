@@ -566,10 +566,7 @@ public class GameView extends AppCompatActivity {
                         firstTime++;
                     }
                 };
-                if (adsVisible())
                     m_handler.postDelayed(m_handlerTask, 10000);
-                else m_handler.postDelayed(m_handlerTask, 1000);
-                ;
 
             }
         });
