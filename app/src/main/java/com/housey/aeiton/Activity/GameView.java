@@ -90,13 +90,13 @@ public class GameView extends AppCompatActivity {
     PicassoImageSwitcher switcher1, switcher2, switcher3;
 
     Animation leftOpen, leftClose, appear, disappear;
-    int which, g = 0;
+    int which;
     int[] pos = {0, 1, 2, 0};
     ActionMenuView actionMenuView;
 
     Handler m_handler;
     Runnable m_handlerTask;
-    int firstTime = 0;
+    int firstTime = 0, setCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,7 +255,7 @@ public class GameView extends AppCompatActivity {
             public void onClick(View v) {
                 initRecycler(0);
                 rewardsTv.setText("Rewards");
-              rewardsTv.setVisibility(View.VISIBLE);
+                rewardsTv.setVisibility(View.VISIBLE);
                 rewardsTv.setCompoundDrawablesWithIntrinsicBounds(
                         ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_card_giftcard_black_24dp),
                         null,
@@ -322,6 +322,8 @@ public class GameView extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (adPaths.size() >= 3)
+            displayAds();
     }
 
     @Override
@@ -457,7 +459,12 @@ public class GameView extends AppCompatActivity {
         }
 
         gv.setAdapter(new CustomGridAdapter(GameView.this));
-        displayAds();
+
+        adBanner1.setVisibility(View.INVISIBLE);
+        adBanner2.setVisibility(View.INVISIBLE);
+        adBanner3.setVisibility(View.INVISIBLE);
+        if (adPaths.size() >= 3)
+            displayAds();
     }
 
     private void saveData() {
@@ -512,8 +519,6 @@ public class GameView extends AppCompatActivity {
     }
 
     private void displayAds() {
-        firstTime++;
-
         m_handler = new Handler(Looper.getMainLooper());
 
         AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Integer>() {
@@ -523,9 +528,11 @@ public class GameView extends AppCompatActivity {
                 //wait for 30 secs here and continue
                 Log.d("control", "DIB");
 
-                changePositions();
+                if (firstTime != 0) {
+                    changePositions();
+                }
                 Log.d("TAG", "doInBackground: changingDone");
-                return g;
+                return 0;
             }
 
             @Override
@@ -533,7 +540,7 @@ public class GameView extends AppCompatActivity {
                 super.onPostExecute(aVoid);
 
                 Log.d("control", "onPostExecute");
-                Log.d("PositionsOPE", pos[0] + " " + pos[1] + " " + pos[2] + " " + g + " ");
+                Log.d("PositionsOPE", pos[0] + " " + pos[1] + " " + pos[2] + " " + " ");
 
 
                 Picasso.with(getApplicationContext())
@@ -556,16 +563,27 @@ public class GameView extends AppCompatActivity {
                     @Override
                     public void run() {
                         displayAds();
+                        firstTime++;
                     }
                 };
-                int time1 = 3000, time2 = 3000; //switch ads after 3 secs (time to download
-                if (firstTime == 1)
-                    m_handler.postDelayed(m_handlerTask, time1);
-                else m_handler.postDelayed(m_handlerTask, time2);
+                if (adsVisible())
+                    m_handler.postDelayed(m_handlerTask, 10000);
+                else m_handler.postDelayed(m_handlerTask, 1000);
+                ;
 
             }
         });
 
+    }
+
+    private boolean adsVisible() {
+        boolean visible = false;
+        if (adBanner1.getVisibility() == View.VISIBLE
+                && adBanner2.getVisibility() == View.VISIBLE
+                && adBanner3.getVisibility() == View.VISIBLE) {
+            visible = true;
+        }
+        return visible;
     }
 
     private void makeVisible() {
@@ -618,7 +636,47 @@ public class GameView extends AppCompatActivity {
 
     private void changePositions() {
 
-        if (g + 2 >= adPaths.size()) {
+        int noOfAdBanners = 3;
+        int set = adPaths.size() / 3;
+        int mod = adPaths.size() % noOfAdBanners;
+        if (mod != 0) set += 1;
+        setCount++;
+        if (set == setCount) {
+            pos[0] = 0;
+            pos[1] = 1;
+            pos[2] = 2;
+            setCount = 0;
+            return;
+        }
+        if (mod == 0) {
+            if (adPaths.size() == 3) {
+                pos[0] = 0;
+                pos[1] = 1;
+                pos[2] = 2;
+                return;
+            }
+            if (adPaths.size() > 3) {
+                pos[0] += noOfAdBanners;
+                pos[1] += noOfAdBanners;
+                pos[2] += noOfAdBanners;
+                return;
+            }
+
+        }
+
+        if (mod == 1) {
+            pos[0] += noOfAdBanners;
+            return;
+        }
+
+        if (mod == 2) {
+            pos[0] += noOfAdBanners;
+            pos[1] += noOfAdBanners;
+            return;
+        }
+
+
+/*        if (g + 2 >= adPaths.size()) {
             pos[0] = g;
             pos[1] = pos[0] + 1;
             pos[2] = 0;
@@ -635,7 +693,7 @@ public class GameView extends AppCompatActivity {
             pos[2] = pos[1] + 1;
         }
 
-        g++;
+        g++;*/
     }
 
     private void setUpAdBanners() {
