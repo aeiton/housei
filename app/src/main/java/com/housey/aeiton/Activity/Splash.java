@@ -1,24 +1,15 @@
 package com.housey.aeiton.Activity;
 
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -60,7 +51,7 @@ public class Splash extends NammaTvMainActivity {
     ImageButton play;
     Snackbar snackbar;
     Intent intent;
-    boolean success = false, isCard = false, isRegistered = false;
+    boolean success = false, isCard = false, isRegistered = false, fromPlay = false;
     ProgressBar pro;
 
 
@@ -106,6 +97,7 @@ public class Splash extends NammaTvMainActivity {
                         startActivity(intent);
                         finish();
                     } else {
+                        fromPlay = true;
                         startTheEngine();
                     }
                 }
@@ -120,6 +112,7 @@ public class Splash extends NammaTvMainActivity {
         super.onResume();
         pro.setVisibility(View.INVISIBLE);
         play.setVisibility(View.VISIBLE);
+        fromPlay = false;
         // TODO: 23-06-2017 Change the index '0' to the position of "HOUSEY" in nav drawer
         navigationView.getMenu().getItem(7).setChecked(true);
     }
@@ -139,14 +132,14 @@ public class Splash extends NammaTvMainActivity {
         pro.setVisibility(View.VISIBLE);
         play.setVisibility(View.INVISIBLE);
 
-        if (isCard) {
+        if (isconnected()) {
+            Log.d("getcard", "startTheEngine");
+            getCard();
+        } else if (isCard) {
             valid = HawkSingleton.getInstance().hawkGet(VALIDITY);
             response = HawkSingleton.getInstance().hawkGet(RESPONSE);
             Log.d("checkCard", "starttheEngine");
             checkCardValidity(0);
-        } else if (isconnected()) {
-            Log.d("getcard", "startTheEngine");
-            getCard();
         } else showSnackbar(getString(R.string.nic), true);
     }
 
@@ -177,7 +170,7 @@ public class Splash extends NammaTvMainActivity {
                                 checkCardValidity(0);
                                 //send response to GameView.java while opening it
                                 intent.putExtra("CARDRESPONSE", response);
-                                startActivity(intent);
+                                if (fromPlay) startActivity(intent);
                             } else if (status == 2) {
                                 valid = object.getString("valid_till");
 //                                showSnackbar(object.getString("msg"), false);
@@ -185,7 +178,7 @@ public class Splash extends NammaTvMainActivity {
                                 checkCardValidity(0);
                                 //send response to GameView.java while opening it
                                 intent.putExtra("CARDRESPONSE", response);
-                                startActivity(intent);
+                                if (fromPlay) startActivity(intent);
                             }
 
                         } catch (JSONException e) {
@@ -235,7 +228,7 @@ public class Splash extends NammaTvMainActivity {
             Date actualDate = sdf.parse(sdf.format(cal.getTime()));
             Date validDate = sdf.parse(valid);
             Log.d("actual", " " + actualDate);
-            Log.d("valid ",  "  " + validDate);
+            Log.d("valid ", "  " + validDate);
 
             if (validDate.compareTo(actualDate) < 0) {
                 //validity has expired

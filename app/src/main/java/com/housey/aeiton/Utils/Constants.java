@@ -59,4 +59,6 @@ public class Constants {
     public static final String ADS = "ADS";
 
     public static final String ADNUMS = "adNumbers";
+
+    public static final int AD_SWITCH_TIME = 10000; //10 secs
 }

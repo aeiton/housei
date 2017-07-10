@@ -1,12 +1,8 @@
 package com.housey.aeiton.Utils;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by JAR on 19-03-2017.
@@ -38,10 +34,11 @@ public class DataSingleton {
 
     public static ArrayList<Integer> selectedNos = new ArrayList<>();
 
-    public static ArrayList<String> adPaths = new ArrayList<>();
+    public static Queue<String> adPaths = new LinkedList<>();
 
     public static ArrayList<Rewards> rewards = new ArrayList<>();
 
     public static ArrayList<Rewards> rule = new ArrayList<>();
 
+    public static ArrayList<String> adUrls = new ArrayList<>();
 }

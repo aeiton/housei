@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageSwitcher;
 
+import com.housey.aeiton.Utils.DataSingleton;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 

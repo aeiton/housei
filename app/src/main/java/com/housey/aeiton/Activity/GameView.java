@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.AlertDialog;
@@ -48,12 +47,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.housey.aeiton.Utils.Constants.AD_SWITCH_TIME;
 import static com.housey.aeiton.Utils.Constants.ISCARD;
 import static com.housey.aeiton.Utils.Constants.ISPLAYED;
 import static com.housey.aeiton.Utils.Constants.REGISTRATION_KEY;
 import static com.housey.aeiton.Utils.Constants.SELECTEDNO;
 import static com.housey.aeiton.Utils.Constants.USER_ID;
 import static com.housey.aeiton.Utils.DataSingleton.adPaths;
+import static com.housey.aeiton.Utils.DataSingleton.adUrls;
 import static com.housey.aeiton.Utils.DataSingleton.caller;
 import static com.housey.aeiton.Utils.DataSingleton.card;
 import static com.housey.aeiton.Utils.DataSingleton.cardId;
@@ -147,6 +148,16 @@ public class GameView extends AppCompatActivity {
         makeInvisible();
         setUpAnimation();
         setUpAdBanners();
+        adUrls.clear();
+
+        m_handlerTask = new Runnable() {
+            @Override
+            public void run() {
+                firstTime++;
+                displayAds();
+                Log.d("Display Ads", "Runnable");
+            }
+        };
 
         cardResponse = getIntent().getStringExtra("CARDRESPONSE");
         Log.d("CardResponse", " " + cardResponse);
@@ -303,19 +314,17 @@ public class GameView extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-
+        m_handler.removeCallbacks(m_handlerTask);
         Log.d("onPause", "PAUSED");
         saveList();
-        m_handler.removeCallbacks(m_handlerTask);
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-
         Log.d("onDestroy", "DESTROYED");
-        saveList();
         m_handler.removeCallbacks(m_handlerTask);
+        saveList();
         super.onDestroy();
     }
 
@@ -324,6 +333,7 @@ public class GameView extends AppCompatActivity {
         super.onResume();
         if (adPaths.size() >= 3)
             displayAds();
+        Log.d("OnResume", "yes");
     }
 
     @Override
@@ -344,7 +354,7 @@ public class GameView extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Boolean[] checked = {false,};
+
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
         builder.setTitle("Do you want to exit the game?")
                 .setMessage(R.string.leave_message)
@@ -411,7 +421,7 @@ public class GameView extends AppCompatActivity {
                 adPaths.add(adsObj.getString("path"));
 //                adPaths.add(adsObj.getString("path"));
 //                adPaths.add(adsObj.getString("path"));
-                Log.d("adPaths", " " + adPaths.get(i));
+                Log.d("adPaths", " " + adPaths.peek());
             }
 
             // for marquee text
@@ -463,8 +473,12 @@ public class GameView extends AppCompatActivity {
         adBanner1.setVisibility(View.INVISIBLE);
         adBanner2.setVisibility(View.INVISIBLE);
         adBanner3.setVisibility(View.INVISIBLE);
-        if (adPaths.size() >= 3)
-            displayAds();
+
+        if (adPaths.size() >= 3) {
+            preProcess();
+//            displayAds();
+            Log.d("Displayads ", "SplitTicket");
+        }
     }
 
     private void saveData() {
@@ -518,56 +532,46 @@ public class GameView extends AppCompatActivity {
         }
     }
 
-    private void displayAds() {
-        m_handler = new Handler(Looper.getMainLooper());
+    private void preProcess() {
+        m_handler = new Handler();
+        Log.d("Control", "preprocess");
 
+    }
+
+    private void displayAds() {
         AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Integer>() {
 
             @Override
             protected Integer doInBackground(Void... aVoid) {
                 //wait for 30 secs here and continue
-                Log.d("control", "DIB");
-
-                if (firstTime != 0) {
-                    changePositions();
-                }
-                Log.d("TAG", "doInBackground: changingDone");
-                return 0;
+                changePositions();
+                return null;
             }
 
             @Override
             protected void onPostExecute(Integer aVoid) {
                 super.onPostExecute(aVoid);
+                try {
+                    Log.d("Position changed ", "In OPE");
+                    Picasso.with(getApplicationContext())
+                            .load(adUrls.get(0))
+                            .into(switcher1);
 
-                Log.d("control", "onPostExecute");
-                Log.d("PositionsOPE", pos[0] + " " + pos[1] + " " + pos[2] + " " + " ");
+                    Picasso.with(getApplicationContext())
+                            .load(adUrls.get(1))
+                            .into(switcher2);
+
+                    Picasso.with(getApplicationContext())
+                            .load(adUrls.get(2))
+                            .into(switcher3);
 
 
-                Picasso.with(getApplicationContext())
-                        .load(adPaths.get(pos[0]))
-                        .placeholder(R.drawable.banner_1)
-                        .error(R.drawable.banner_1)
-                        .into(switcher1);
-                Picasso.with(getApplicationContext())
-                        .load(adPaths.get(pos[1]))
-                        .placeholder(R.drawable.banner_1)
-                        .error(R.drawable.banner_1)
-                        .into(switcher2);
-                Picasso.with(getApplicationContext())
-                        .load(adPaths.get(pos[2]))
-                        .placeholder(R.drawable.banner_1)
-                        .error(R.drawable.banner_1)
-                        .into(switcher3);
 
-                m_handlerTask = new Runnable() {
-                    @Override
-                    public void run() {
-                        displayAds();
-                        firstTime++;
-                    }
-                };
-                    m_handler.postDelayed(m_handlerTask, 10000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
+                m_handler.postDelayed(m_handlerTask, AD_SWITCH_TIME);
             }
         });
 
@@ -632,12 +636,25 @@ public class GameView extends AppCompatActivity {
     }
 
     private void changePositions() {
+        Log.d("Changing Positions", "start");
+        if (adUrls.size() != 0) {
+            for (int x = 0; x < 3; x++) {
+                adPaths.add(adUrls.get(x));
+            }
+            adUrls.clear();
+        }
 
-        int noOfAdBanners = 3;
-        int set = adPaths.size() / 3;
+        for (int x = 0; x < 3; x++) {
+            adUrls.add(adPaths.poll());
+        }
+
+
+      /*  int noOfAdBanners = 3;
+        int set = adPaths.size() / noOfAdBanners;
         int mod = adPaths.size() % noOfAdBanners;
         if (mod != 0) set += 1;
         setCount++;
+        Log.d("TAG", "changePositions: Mod:" + mod + " setCount:" + setCount + " Set " + set);
         if (set == setCount) {
             pos[0] = 0;
             pos[1] = 1;
@@ -670,7 +687,7 @@ public class GameView extends AppCompatActivity {
             pos[0] += noOfAdBanners;
             pos[1] += noOfAdBanners;
             return;
-        }
+        }*/
 
 
 /*        if (g + 2 >= adPaths.size()) {
@@ -702,7 +719,6 @@ public class GameView extends AppCompatActivity {
 
         adBanner3.setInAnimation(leftClose);
         adBanner3.setOutAnimation(leftOpen);
-
         adBanner1.setFactory(new ViewSwitcher.ViewFactory() {
             @Override
             public View makeView() {
