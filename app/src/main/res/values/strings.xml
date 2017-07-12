@@ -21,6 +21,7 @@
 
     <string name="claim">Claim Your Prize</string>
     <string name="claim_desc">Call any of the below numbers to claim your prize</string>
+    <string name="developers_company">aeiton labs</string>
 
     <string name="rs">\u20b9</string>
     <string name="title_activity_namma_tv_main">NammaTvMainActivity</string>

@@ -7,7 +7,7 @@
     </style>
     <style name="MenuItemsTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/black_overlay</item>
+        <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">18sp</item>
     </style>
 

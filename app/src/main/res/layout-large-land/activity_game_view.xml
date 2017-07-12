@@ -219,11 +219,12 @@
                             android:id="@+id/recycler"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_gravity="center"
                             android:layout_margin="5dp"
                             android:background="#fff"
                             android:paddingBottom="10dp"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="5dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="5dp"
                             android:paddingTop="40dp">
 
                         </android.support.v7.widget.RecyclerView>
@@ -241,7 +242,7 @@
                                 android:layout_marginEnd="50dp"
                                 android:layout_marginStart="20dp"
                                 android:layout_marginTop="8dp"
-                                android:drawableLeft="@drawable/ic_format_list_bulleted_black_24dp"
+                                android:drawableStart="@drawable/ic_format_list_bulleted_black_24dp"
                                 android:drawablePadding="10dp"
                                 android:drawableTint="@color/colorAccent"
                                 android:gravity="center"
@@ -306,25 +307,29 @@
                         android:id="@+id/ad_banner1"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2" />
+                        android:layout_weight="1" />
 
-                    <com.lb.auto_fit_textview.AutoResizeTextView
-                        android:id="@+id/marqueeText"
+                    <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_weight="3"
-                        android:background="@color/colorPrimaryDark"
-                        android:ellipsize="marquee"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:gravity="center"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:scrollHorizontally="true"
-                        android:singleLine="true"
-                        android:text="@string/msg"
-                        android:textColor="#ffffff" />
+                        android:layout_weight="1">
 
+                        <com.lb.auto_fit_textview.AutoResizeTextView
+                            android:id="@+id/marqueeText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="@color/colorPrimaryDark"
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:gravity="center"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:text="@string/msg"
+                            android:textColor="#ffffff" />
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

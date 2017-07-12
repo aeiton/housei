@@ -170,7 +170,7 @@ public class GameView extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText(label, ticketNo.getText().toString());
+                ClipData clip = ClipData.newPlainText(label, cardNo);
                 clipboardManager.setPrimaryClip(clip);
                 Toast.makeText(GameView.this, "Ticket No " + cardNo + " is copied to the clipboard", Toast.LENGTH_LONG).show();
             }
@@ -309,6 +309,7 @@ public class GameView extends AppCompatActivity {
             }
         });
 
+//        marqueeText.seton
     }
 
 

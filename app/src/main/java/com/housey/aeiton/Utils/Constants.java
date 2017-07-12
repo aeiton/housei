@@ -17,7 +17,7 @@ public class Constants {
     public static final String CARD_URL = "card.php";
 
     /* Youtube Links here*/
-    public static final String LINK = "http://www.youtube.com/";
+    public static final String LINK = "http://www.aeiton.in/";
 
 
     /*---------Permissions Here------*/

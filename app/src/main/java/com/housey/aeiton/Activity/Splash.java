@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -102,6 +103,14 @@ public class Splash extends NammaTvMainActivity {
                     }
                 }
 
+            }
+        });
+
+        findViewById(R.id.dev_company).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aeiton.com/")));
+                return true;
             }
         });
 
